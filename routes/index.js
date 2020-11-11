@@ -1,7 +1,6 @@
 var express = require('express');
 var router = express.Router();
 
-
 // 引入自定义token模块
 const verToken = require('../utils/token');
 
@@ -10,8 +9,7 @@ const users = require("../model/users");
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-    console.log(req.user)
-    res.send('欢迎光临')
+    res.render('index', {title: '测试', isLogin: req.user || false})
 });
 
 router.post('/register', function(req, res, next) {
