@@ -15,6 +15,7 @@ const config = require("./config");
 // 引入路由文件
 let indexRouter = require('./routes/index');
 let usersRouter = require('./routes/users');
+let uploadRouter = require('./routes/upload');
 
 let app = express();
 
@@ -36,9 +37,9 @@ app.use(function(req, res, next) {
 
 // 静态文件路径
 // 绝对路径访问 例如： /public/images/1.jpg
-// app.use(express.static(__dirname));
+app.use(express.static(__dirname));
 // 相对路径访问 例如： /images/1.jpg
-app.use(express.static(path.join(__dirname, 'public')));
+// app.use(express.static(path.join(__dirname, 'public')));
 
 //验证token是否过期并规定那些路由不需要验证,
 //写在静态资源获取之后，避免静态资源无法访问
@@ -70,15 +71,22 @@ app.use(cookieParser());
 // 分配路由
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/upload', uploadRouter);
+
 
 //验证token失效返回信息
 app.use(function(err, req, res, next) {
-    if(err.status==401){
+    if(err.status == 401) {
         if(err.inner.name == 'TokenExpiredError') {
-            return res.status(401).send('token失效，请重新登录')
+            return res.json({
+                code: 401,
+                message: '登录态过期，请重新登录'
+            })
         }else {
-            return res.status(401).send('请先登录')
-            // return res.json({message:'token失效'})
+            return res.json({
+                code: 401,
+                message: '请先登录'
+            })
         }
     }
 })

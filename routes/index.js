@@ -12,6 +12,7 @@ router.get('/', function(req, res, next) {
     res.render('index', {title: '测试', isLogin: req.user || false})
 });
 
+// 注册接口
 router.post('/register', function(req, res, next) {
     // 新增数据的方法
     users.create({
@@ -30,6 +31,7 @@ router.post('/register', function(req, res, next) {
     })
 });
 
+// 登录接口
 router.post('/login', function(req, res, next) {
     let user_account = req.body.user_name
     let user_password = req.body.user_password
@@ -40,17 +42,23 @@ router.post('/login', function(req, res, next) {
             user_password: req.body.user_password
         }, function(err,ret){
             if(err){
-                return res.send("登录失败：查询失败");
+                return res.send({
+                    message: '登录失败：查询错误',
+                    err: err
+                })
             } else {
                 if(!ret) {
-                    return res.send("登录失败：账号或密码错误");
+                    return res.send({
+                        message: '登录失败：账号或密码错误'
+                    })
                 }
                 // 设置生成token
                 verToken.setToken(ret.user_account, ret._id).then(token => {
                     return  res.send({
-                                code: 200,
-                                message: ret.user_account + '登录成功',
-                                token: token
+                                data: {
+                                    message: ret.user_account + '登录成功',
+                                    token: token
+                                }
                                 //前端获取token后存储在localStroage中,
                                 //**调用接口时 设置axios(ajax)请求头Authorization的格式为`Bearer ` +token
                             })
