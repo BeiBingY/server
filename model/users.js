@@ -1,3 +1,8 @@
+/**
+ * users文档model
+ * 
+ */
+
 const db = require("../config/db");
 const md5 = require("../utils/md5")
 let userSchema = new db.Schema({

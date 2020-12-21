@@ -21,6 +21,12 @@ let app = express();
 
 app.use(cors());//使用跨域中间件
 
+// 静态文件路径
+// 绝对路径访问 例如： /public/images/1.jpg
+app.use(express.static(__dirname));
+// 相对路径访问 例如： /images/1.jpg
+// app.use(express.static(path.join(__dirname, 'public')));
+
 app.use(function(req, res, next) {
     let token = req.headers['authorization']
     if(!token) {
@@ -35,12 +41,6 @@ app.use(function(req, res, next) {
     }
 })
 
-// 静态文件路径
-// 绝对路径访问 例如： /public/images/1.jpg
-app.use(express.static(__dirname));
-// 相对路径访问 例如： /images/1.jpg
-// app.use(express.static(path.join(__dirname, 'public')));
-
 //验证token是否过期并规定那些路由不需要验证,
 //写在静态资源获取之后，避免静态资源无法访问
 app.use(expressJwt({
@@ -49,6 +49,7 @@ app.use(expressJwt({
 }).unless({
     //不需要验证的接口名称
     path:[
+        '/users',
         '/', 
         '/login', 
         '/register',
